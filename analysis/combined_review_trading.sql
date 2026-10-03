@@ -1,3 +1,8 @@
+-- MarginOps | Trading and review comparison
+-- Each source is aggregated independently to site + month before joining.
+-- Results are exploratory; review dates are not confirmed visit dates.
+-- Replace YOUR_PROJECT_ID.YOUR_DATASET before execution.
+
 -- Query 1
 /* Creating a reusable monthly total revenue view */
 

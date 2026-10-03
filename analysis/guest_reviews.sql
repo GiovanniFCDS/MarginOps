@@ -1,3 +1,8 @@
+-- MarginOps | Guest review analysis
+-- Grain: one row per submitted review.
+-- Valid ratings and review-volume populations have separate rules.
+-- Replace YOUR_PROJECT_ID.YOUR_DATASET before execution.
+
 -- Query 1
 /* First load of the cleaned data */
 

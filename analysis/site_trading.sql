@@ -1,3 +1,9 @@
+-- MarginOps | Site trading analysis
+-- Grain: site + date + shift.
+-- Run against a cleaned table matching the project schema.
+-- KPI eligibility is defined independently in each query.
+-- Replace YOUR_PROJECT_ID.YOUR_DATASET before execution.
+
 -- Query 1
 SELECT*
 FROM `YOUR_PROJECT_ID.YOUR_DATASET.Cleaned_Site_Trading`

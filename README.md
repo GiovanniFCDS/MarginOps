@@ -1,49 +1,76 @@
-# MarginOps — Commercial Finance & FP&A Analytics
+# MarginOps
 
-**Status: analysis complete** · **Tools: Python, BigQuery SQL, Excel, Power BI**
+### Commercial finance & FP&A analytics for hospitality operations
 
-MarginOps is an end-to-end analytics project applying commercial finance questions to hospitality-style operating data. It covers data quality, KPI design, site trading performance, guest review analysis, reconciliation and an exploratory comparison between trading and reviews.
+An end-to-end portfolio project turning hospitality-style trading and guest-review data into documented commercial KPIs, a reconciliation workflow and a Power BI report.
 
-I started this project to connect my hospitality operations experience with my BSc in FinTech with Data Analytics. The data covers five sites, 7,500 trading records at site/date/shift level and 1,171 guest reviews.
+**Project status: complete** · **Analysis:** Python, BigQuery SQL · **Reconciliation:** Excel · **Reporting:** Power BI
 
-## What I investigated
+---
 
-- How revenue, covers, spend per cover, cost of sales, gross margin, wastage and forecast variance differ across sites.
-- How trading summaries change by shift, weekday and month.
-- How valid review ratings and review counts vary by site and platform.
-- Whether monthly site-level revenue and average ratings show a detectable linear association.
+## Executive summary
 
-## Workflow
+MarginOps explores the trading performance of five hospitality sites and tests whether monthly revenue and guest-review ratings move together. The project covers **7,500 site/date/shift trading records** and **1,171 individual guest reviews**. It began as a way to connect my hospitality operations experience with my BSc in FinTech with Data Analytics.
 
-1. **Python / pandas:** inspect and clean source files; retain ambiguous values; add data-quality and duplicate flags; document exclusions.
-2. **BigQuery SQL:** define KPI-specific eligibility; calculate trading and review summaries; use window functions and rankings; aggregate both tables to site/month before joining.
-3. **Excel:** reconcile summary outputs and check calculations.
-4. **Power BI:** present commercial performance in a report.
+The analysis found spend per cover of approximately **£13.25–£13.50** and gross margin of **65.1%–66.1%** across sites under the stated SQL eligibility rules. Average review ratings ranged from **3.57 to 3.72**. An exploratory site/month comparison produced a revenue-to-rating correlation of **-0.079**; this is a descriptive result, not evidence of cause and effect.
 
-## Selected observations
+> Revenue basis, duplicate trading keys and review-date timing remain important limitations. See [methodology and limitations](docs/methodology.md) before interpreting the results.
 
-- Site-level spend per cover was approximately £13.25–£13.50 and gross margin was approximately 65.1%–66.1%, under the eligibility rules in the trading analysis. Similar summaries alone do not establish a standardised pricing model.
-- Average review ratings ranged from approximately 3.57 to 3.72. Google supplied the largest review volume; platform and reviewer selection mean these ratings do not represent all guests.
-- The exploratory correlation between monthly revenue and average rating was approximately **-0.079**. This does not establish causation or show that guest sentiment has no effect on revenue.
+## Project workflow
 
-## Limitations
+```mermaid
+flowchart LR
+    A[Source data] --> B[Python cleaning and QA]
+    B --> C[BigQuery KPI analysis]
+    C --> D[Excel reconciliation]
+    C --> E[Power BI reporting]
+    C --> F[Exploratory site-month comparison]
+```
 
-- The revenue basis (VAT, promotions, discounts, service charge and tips) has not been confirmed, so revenue-based measures are provisional.
-- Repeated site/date/shift keys remain flagged for investigation. Duplicate handling and row eligibility can change totals.
-- Monthly totals are affected by different trading-day counts; they are not automatically like-for-like.
-- Review dates are not confirmed visit dates. The site/month comparison is exploratory and not causal.
-- The dataset is hospitality-style portfolio data. Findings should not be treated as official results for a named employer or venue.
+## Questions explored
 
-## Repository contents
+- How do sales, covers, spend per cover, cost of sales, gross margin, wastage and forecast variance differ by site?
+- How do trading summaries vary by shift, weekday and month?
+- How do valid ratings and review volumes vary across sites and platforms?
+- What association, if any, appears when trading and review data are compared at a shared site/month grain?
 
-- `analysis/site_trading.sql` — trading quality checks and KPI analysis.
-- `analysis/guest_reviews.sql` — review quality, volume and rating analysis.
-- `analysis/combined_review_trading.sql` — monthly views, join coverage and exploratory correlation.
-- `data/README.md` — data handling and reproduction notes.
-- `visuals/README.md` — dashboard artifact notes.
+## Tools and methods
 
-Raw records and guest review text are not published. SQL references use placeholders; replace `YOUR_PROJECT_ID.YOUR_DATASET` with your own BigQuery table location before running. Saved query outputs were removed from the scripts to keep the repository focused on reproducible analysis and avoid publishing row-level results.
+| Stage | Tools | Work demonstrated |
+|---|---|---|
+| Clean and validate | Python, pandas | Preserve raw data; standardise labels; parse dates; flag missingness, invalid ratings and duplicates |
+| Analyse | BigQuery SQL | Conditional aggregation, KPI-specific eligibility, CTEs, window functions, ranking and monthly views |
+| Reconcile | Excel | Trace and reconcile summary calculations |
+| Communicate | Power BI | Present commercial KPIs and site comparisons |
 
-## About
+## Repository guide
 
-This is a personal portfolio project demonstrating applied analytics and commercial reasoning. It is not an official report for any employer.
+| Path | Contents |
+|---|---|
+| [`analysis/site_trading.sql`](analysis/site_trading.sql) | Trading data checks and commercial KPIs |
+| [`analysis/guest_reviews.sql`](analysis/guest_reviews.sql) | Rating, review-volume and data-quality analysis |
+| [`analysis/combined_review_trading.sql`](analysis/combined_review_trading.sql) | Monthly views, join coverage and exploratory correlation |
+| [`docs/methodology.md`](docs/methodology.md) | Grain, eligibility and interpretation limits |
+| [`docs/findings_and_limits.md`](docs/findings_and_limits.md) | Findings, unresolved checks and publication caveats |
+| [`data/README.md`](data/README.md) | Data handling and reproduction guidance |
+| [`visuals/README.md`](visuals/README.md) | Power BI artifact and public-release notes |
+
+## Analytical principles
+
+- Each KPI defines its own eligible rows; one metric’s exclusions do not silently affect another.
+- Missing values and ambiguous negatives are not automatically treated as zero.
+- Rating averages are reported with their supporting review counts.
+- Trading and review data are aggregated separately to site/month before joining, preventing row multiplication across different grains.
+- Results are descriptive. Association is not causation.
+
+## Reproduce the SQL
+
+The scripts use BigQuery Standard SQL. Load compatible tables into your own dataset and replace `YOUR_PROJECT_ID.YOUR_DATASET` with your BigQuery project and dataset. Table and field names should match the schema described in the scripts. Saved query outputs and row-level source records are intentionally excluded from this public repository.
+
+## Data and privacy
+
+The public repository contains analysis logic and documentation, not raw records or guest review text. The interactive Power BI file is also excluded from this initial release because it can embed underlying data. A static report will only be published after its pages and detailed values have been checked for public release.
+
+## About this project
+
+MarginOps is a personal learning and portfolio project. It demonstrates an applied analytics workflow and commercial reasoning; it is not an official report for an employer or venue.
