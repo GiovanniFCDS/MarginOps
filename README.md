@@ -4,7 +4,7 @@
 
 An end-to-end portfolio project turning hospitality trading and guest-review data into documented commercial KPIs, analysis and a Power BI report.
 
-**Status: complete** · **Data:** site trading and guest reviews · **Tools:** Python, BigQuery SQL, Excel and Power BI
+**Status: analysis complete; cross-tool reconciliation open** · **Data:** site trading and guest reviews · **Tools:** Python, BigQuery SQL, Excel and Power BI
 
 ---
 
@@ -43,10 +43,10 @@ The original draft also listed questions about labour budgets and revenue per la
 
 | Stage | Tools | Work demonstrated |
 |---|---|---|
-| Clean and validate | Python, pandas | Standardised labels, parsed dates and added missingness, validity and duplicate flags |
-| Analyse | BigQuery SQL | KPI-specific eligibility, conditional aggregation, CTEs, window functions and monthly views |
-| Reconcile | Excel | Compared core outputs; wastage-rate numerator still needs reconciliation |
-| Communicate | Power BI | Presented commercial KPIs and site comparisons |
+| Clean and validate | Python, pandas | Cleaning notebooks exist in the working files; they are not included in this public repo |
+| Analyse | BigQuery SQL | Analysis scripts are included; raw source data and executed notebook outputs are not |
+| Reconcile | Excel | Workbook exists in the working files; wastage-rate numerator still needs reconciliation |
+| Communicate | Power BI | Five-page report exists in the working files; headline KPIs do not yet match SQL/Excel |
 
 ## Repository guide
 
@@ -77,7 +77,7 @@ The scripts use BigQuery Standard SQL. Load compatible tables into your own data
 
 ## Data and privacy
 
-This public repository contains analysis code and documented aggregate findings, not raw records or guest text. The interactive `.pbix` file and PDF export are not included because they contain named-site figures and detailed trading rows. They can be prepared for release separately after anonymisation or public-data approval.
+This public repository contains SQL and documented aggregate findings, not the pandas notebooks, Excel workbook, Power BI file, raw records or guest text. The work across all four tools exists in the supplied working files, but the public repo currently lets a reviewer inspect the SQL only. The Excel and Power BI outputs need cross-tool reconciliation before their findings are presented as a single validated result; the workbook and report also contain named-site details and row-level data.
 
 ## About
 

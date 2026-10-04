@@ -1,6 +1,6 @@
 # Business questions and answers
 
-This page follows the submitted final SQL and Excel reconciliation. Trading KPI calculations retain rows according to the eligibility conditions in that SQL; duplicate flags are not applied as a global exclusion. A separate duplicate audit or WAPE calculation was not part of the submitted business analysis.
+This page follows the submitted SQL and Excel outputs. Trading KPI calculations retain rows according to the eligibility conditions in that SQL; duplicate flags are not applied as a global exclusion. The Power BI export was checked separately and does not currently reconcile to the SQL/Excel headline results, so it is not treated as a confirming source here.
 
 ## Questions supported by the submitted analysis
 
@@ -12,6 +12,10 @@ This page follows the submitted final SQL and Excel reconciliation. Trading KPI 
 | What did the wastage analysis show? | The SQL output reports site-level recorded wastage totals from **£3,557 to £15,875**. The wastage-rate result is not reconciled: the SQL rate numerator uses wastage on the matched complete-revenue population, while the Excel sheet appears to divide the all-recorded wastage total by a complete-revenue denominator. Until that numerator mismatch is corrected in the workbook, no single wastage rate should be presented as the reconciled answer. |
 | How did guest ratings vary? | The submitted review SQL excludes rows flagged duplicate_after_first for rating averages. Site averages ranged from **3.58 to 3.72**. Platform results were Google **3.62** (648 ratings), TripAdvisor **3.70** (355), and Facebook **3.68** (152). These are ratings from self-selected reviewers rather than a measure of every guest's experience. |
 | Was monthly revenue related to average guest rating? | The submitted site/month comparison found a Pearson correlation of **-0.079** across **121 site/months with reviews**. This indicates little linear association in this sample; review dates are not confirmed visit dates, and correlation does not establish causation. |
+
+## Cross-tool reconciliation
+
+The Power BI PDF reports **£6,068,687.49** total revenue and **+1.05%** total revenue variance. The submitted SQL/Excel site rows sum to **£6,027,795.03** total revenue and **+2.24%** variance. These are not the same outputs; the underlying Power BI filters and measure definitions must be aligned before the report is presented as corroborating the SQL/Excel analysis. The PDF also labels the 30 duplicate groups as unresolved conflicting values, while the pandas-cleaned file flags 30 exact-copy rows within 60 key-duplicate rows. Reconcile that wording with the duplicate audit before release.
 
 ## Questions that remain open
 
