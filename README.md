@@ -2,7 +2,7 @@
 
 ### Commercial finance and FP&A analysis for hospitality operations
 
-An end-to-end portfolio project turning hospitality trading and guest-review data into documented commercial KPIs, reconciled analysis and a Power BI report.
+An end-to-end portfolio project turning hospitality trading and guest-review data into documented commercial KPIs, analysis and a Power BI report.
 
 **Status: complete** · **Data:** site trading and guest reviews · **Tools:** Python, BigQuery SQL, Excel and Power BI
 
@@ -45,7 +45,7 @@ The original draft also listed questions about labour budgets and revenue per la
 |---|---|---|
 | Clean and validate | Python, pandas | Standardised labels, parsed dates and added missingness, validity and duplicate flags |
 | Analyse | BigQuery SQL | KPI-specific eligibility, conditional aggregation, CTEs, window functions and monthly views |
-| Reconcile | Excel | Checked and reconciled summary calculations |
+| Reconcile | Excel | Compared core outputs; wastage-rate numerator still needs reconciliation |
 | Communicate | Power BI | Presented commercial KPIs and site comparisons |
 
 ## Repository guide
