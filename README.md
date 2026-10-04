@@ -12,7 +12,7 @@ An end-to-end portfolio project turning hospitality trading and guest-review dat
 
 MarginOps analyses **7,500 site/date/shift trading records** and **1,171 guest reviews** across five sites. It connects my hospitality operations experience with my BSc in FinTech with Data Analytics.
 
-After verifying and excluding 30 later exact-copy trading rows, actual revenue was **£6.004m**, compared with **£5.872m** forecast across eligible shifts. All 24 complete calendar months were above forecast at estate level, though 49 of 123 observed site/month combinations were below plan. Overall gross margin was **65.32%** on the stated matched population. Average guest rating was **3.65/5** after review duplicate handling. The exploratory revenue/rating correlation was **-0.079** and does not imply causation.
+Using the same row eligibility as the submitted SQL and Excel work, the five site-level forecast results sum to **£6.028m actual revenue** against **£5.896m forecast**, a net variance of **+£132.3k (+2.24%)**. The SQL did not use duplicate flags to filter trading rows. Gross margin ranged from **65.14% to 66.13%** across sites. Guest-review SQL reported site averages from **3.58 to 3.72**, and the exploratory site/month revenue-rating correlation was **-0.079**.
 
 The report answers the commercial questions the final two datasets can support and identifies labour questions that remain outside this project's scope. See [business questions and answers](docs/business_questions.md).
 
@@ -29,11 +29,11 @@ flowchart LR
 
 ## What the analysis found
 
-- Forecasts were slightly conservative in aggregate: **+2.24% net variance** and **8.06% WAPE** on eligible de-duplicated shifts.
-- Dinner and weekends had the largest positive forecast variance; Tuesday was slightly below forecast. Estate-level results do not mean every site/month beat plan.
-- Gross margin varied narrowly across sites. Food/wet revenue mix and their different COGS rates are plausible contributors, but the data does not support causal or item-level explanations.
-- Wastage is best viewed both as a total cost and as a share of revenue. The site with the highest absolute cost differed from the site with the highest wastage-to-food-revenue rate.
-- Review averages were close together and platform mix varied. Reviewers are self-selected, and the recorded date is not confirmed as the visit date.
+- The net forecast variance was positive overall, but net bias alone is not a full forecast-accuracy measure. The original analysis did not calculate WAPE or another absolute-error metric.
+- Dinner and weekends showed the strongest positive forecast variances; Tuesday was below forecast in the weekday breakdown.
+- Site gross-margin percentages were close together. The submitted analysis did not decompose the differences into product-mix or category-level COGS drivers.
+- The wastage-rate result needs reconciliation: the SQL and Excel files use different numerator populations. The public findings flag this instead of presenting a single rate as settled.
+- Review averages varied little across sites and platforms. Reviewers are self-selected, and the recorded date is not confirmed as the visit date.
 
 ## Business questions
 
@@ -52,7 +52,7 @@ The original draft also listed questions about labour budgets and revenue per la
 
 | Path | Contents |
 |---|---|
-| [`analysis/business_question_answers.sql`](analysis/business_question_answers.sql) | Reproducible answer calculations with explicit duplicate handling |
+| [`analysis/business_question_answers.sql`](analysis/business_question_answers.sql) | Reproducible calculations using the submitted SQL eligibility rules |
 | [`analysis/site_trading.sql`](analysis/site_trading.sql) | Trading data checks and KPI analysis |
 | [`analysis/guest_reviews.sql`](analysis/guest_reviews.sql) | Review quality, rating and volume analysis |
 | [`analysis/combined_review_trading.sql`](analysis/combined_review_trading.sql) | Monthly views, join coverage and exploratory comparison |
@@ -66,7 +66,7 @@ The original draft also listed questions about labour budgets and revenue per la
 
 - Each KPI defines its own eligible rows; one metric's exclusions do not silently affect another.
 - Missing values and ambiguous negatives are not automatically treated as zero.
-- The raw cleaned table is preserved. Exact duplicate copies are explicitly excluded from primary trading summaries after value-level verification.
+- The raw cleaned table is preserved. Trading duplicate flags are QA fields; the submitted KPI SQL does not use them to exclude rows.
 - Rating averages are shown with eligible review counts.
 - Trading and reviews are aggregated separately to site/month before joining.
 - Results are descriptive. Association is not causation.

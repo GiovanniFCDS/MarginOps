@@ -1,24 +1,24 @@
 # Findings and open evidence gaps
 
-## Supported findings
+## Findings reproduced from the submitted analysis
 
-- On **7,136** de-duplicated open shifts with complete revenue and a forecast, actual revenue was **£6.004m** against **£5.872m** forecast. Net variance was **+2.24%** and WAPE **8.06%**.
-- All 24 complete estate-level calendar months were above forecast. At observed site/month grain, **49 of 123** combinations were below forecast.
-- Gross margin was **65.32%** across **6,998** de-duplicated open shifts with complete revenue and COGS. Site results ranged from **65.15% to 66.13%**.
-- Recorded wastage was **£45,692** across **7,234** de-duplicated open shifts with wastage present. On the matched complete-revenue population it was **5.72% of food revenue**.
-- After review duplicate handling, **1,155** valid ratings averaged **3.65/5**. The exploratory site/month revenue-rating correlation was **-0.079**.
+- Summing the five site-level forecast rows in the submitted SQL/Excel output gives **£6,027,795 actual revenue** against **£5,895,524 forecast**, a net variance of **+£132,271 (+2.24%)**. The submitted query does not remove trading rows using duplicate flags.
+- Four of five site totals were above forecast and one was below. Dinner had a combined positive forecast variance of **£131,463**; lunch was **£808** above forecast. Friday, Saturday and Sunday were positive in the weekday breakdown; Tuesday was below.
+- Site gross-margin percentages ranged from **65.14% to 66.13%** under the submitted matched-population eligibility rules.
+- Review SQL reported site rating averages from **3.58 to 3.72** and platform averages of Google **3.62** (648), TripAdvisor **3.70** (355) and Facebook **3.68** (152), after excluding later flagged duplicate reviews.
+- The exploratory site/month revenue-rating correlation was **-0.079** across 121 site/months with ratings.
 
-## Data checks resolved
+## Corrections to the prior public summary
 
-- The 60 rows flagged as repeated trading keys are 30 two-row groups. Each group contains one unique original value set, confirming 30 additional exact copies and no value-conflicting key groups.
-- Excluding those copies changes aggregate forecast bias and WAPE by less than 0.01 percentage points. The main direction of the findings is robust to that sensitivity check.
+The previous summary incorrectly excluded 30 trading rows flagged as exact copies, although the submitted KPI SQL did not exclude duplicate flags. Its 7,136-shift / £6.004m / £5.872m forecast totals therefore described a different population from the user's analysis. It also added WAPE and monthly forecast claims that were not in the submitted analysis. Those claims have been removed. The corrected forecast totals above sum the five site rows in the submitted SQL/Excel output using the original eligibility rules.
 
-## Open business definitions
+## Open reconciliation and business questions
 
-1. Confirm whether revenue is gross or net of VAT, promotions, discounts, service charge and tips.
-2. Use trading-day-normalised measures for like-for-like monthly comparisons.
-3. Support operational explanations (such as refurbishments) with site notes or another source, not revenue trends alone.
-4. Continue to report review counts with averages, particularly for sparse site/platform/month groups.
+1. **Wastage rate:** SQL and Excel do not use the same numerator population. Reconcile the workbook before publishing a single wastage rate.
+2. **Monthly forecast comparison:** the submitted SQL analyses monthly revenue changes but does not calculate monthly actual-versus-forecast performance.
+3. **Forecast accuracy:** the submitted analysis gives net variance only; it does not measure absolute forecast error.
+4. **Margin drivers:** site margin is shown, but the analysis does not test whether product mix or category-specific COGS explains differences.
+5. **Revenue definition:** confirm whether revenue is gross or net of VAT, promotions, discounts, service charge and tips.
 
 ## Publication note
 

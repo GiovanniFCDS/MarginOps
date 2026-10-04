@@ -1,144 +1,126 @@
--- MarginOps | Reproducible calculations for the business-question answers
--- Uses the cleaned trading and review tables. Replace YOUR_PROJECT_ID.YOUR_DATASET.
--- Primary trading results exclude later exact-copy rows. The source table remains unchanged.
+-- MarginOps | Reproducible calculations following the submitted SQL eligibility rules
+-- Replace YOUR_PROJECT_ID.YOUR_DATASET before execution.
+-- Trading duplicate flags are retained as QA fields; they are not used as KPI filters.
+-- Review rating duplicate handling follows the submitted review analysis.
 
--- 1. Confirm duplicate-key groups and count distinct original trading value sets.
-SELECT
-  COUNT(*) AS repeated_key_groups,
-  SUM(row_count) AS rows_in_repeated_groups,
-  COUNTIF(value_versions = 1) AS exact_copy_groups,
-  COUNTIF(value_versions > 1) AS conflicting_value_groups
-FROM (
-  SELECT
-    site,
-    date,
-    shift,
-    COUNT(*) AS row_count,
-    COUNT(DISTINCT TO_JSON_STRING(STRUCT(
-      day_of_week, covers, wet_revenue, food_revenue, promotions, discounts,
-      service_charge, tips, food_cost, wet_cost_of_sales, wastage_cost,
-      forecast_revenue, is_closed, notes
-    ))) AS value_versions
-  FROM `YOUR_PROJECT_ID.YOUR_DATASET.Cleaned_Site_Trading`
-  GROUP BY site, date, shift
-  HAVING COUNT(*) > 1
-);
-
--- Shared de-duplicated eligible population for forecast comparisons.
-WITH forecast_rows AS (
-  SELECT
-    site,
-    date,
-    derived_day,
-    shift,
-    food_revenue + wet_revenue AS actual_revenue,
-    forecast_revenue
-  FROM `YOUR_PROJECT_ID.YOUR_DATASET.Cleaned_Site_Trading`
-  WHERE is_exact_duplicate = FALSE
-    AND is_closed = FALSE
-    AND revenue_missing = FALSE
-    AND forecast_revenue IS NOT NULL
-)
-SELECT
-  'estate' AS breakdown,
-  'all eligible shifts' AS period,
-  COUNT(*) AS eligible_shifts,
-  SUM(actual_revenue) AS actual_revenue,
-  SUM(forecast_revenue) AS forecast_revenue,
-  SUM(actual_revenue - forecast_revenue) AS variance,
-  100 * SAFE_DIVIDE(SUM(actual_revenue - forecast_revenue), SUM(forecast_revenue)) AS variance_pct,
-  100 * SAFE_DIVIDE(SUM(ABS(actual_revenue - forecast_revenue)), SUM(forecast_revenue)) AS wape_pct
-FROM forecast_rows
-UNION ALL
-SELECT
-  'month', FORMAT_DATE('%Y-%m', DATE_TRUNC(date, MONTH)), COUNT(*),
-  SUM(actual_revenue), SUM(forecast_revenue),
-  SUM(actual_revenue - forecast_revenue),
-  100 * SAFE_DIVIDE(SUM(actual_revenue - forecast_revenue), SUM(forecast_revenue)),
-  100 * SAFE_DIVIDE(SUM(ABS(actual_revenue - forecast_revenue)), SUM(forecast_revenue))
-FROM forecast_rows
-GROUP BY DATE_TRUNC(date, MONTH)
-UNION ALL
-SELECT
-  'weekday', derived_day, COUNT(*),
-  SUM(actual_revenue), SUM(forecast_revenue),
-  SUM(actual_revenue - forecast_revenue),
-  100 * SAFE_DIVIDE(SUM(actual_revenue - forecast_revenue), SUM(forecast_revenue)),
-  100 * SAFE_DIVIDE(SUM(ABS(actual_revenue - forecast_revenue)), SUM(forecast_revenue))
-FROM forecast_rows
-GROUP BY derived_day
-UNION ALL
-SELECT
-  'shift', shift, COUNT(*),
-  SUM(actual_revenue), SUM(forecast_revenue),
-  SUM(actual_revenue - forecast_revenue),
-  100 * SAFE_DIVIDE(SUM(actual_revenue - forecast_revenue), SUM(forecast_revenue)),
-  100 * SAFE_DIVIDE(SUM(ABS(actual_revenue - forecast_revenue)), SUM(forecast_revenue))
-FROM forecast_rows
-GROUP BY shift
-ORDER BY breakdown, period;
-
--- 2. Gross margin and cost rates, on the same eligible population.
+-- 1. Site actual-versus-forecast totals.
 SELECT
   site,
-  COUNT(*) AS eligible_shifts,
-  SUM(food_revenue + wet_revenue) AS revenue,
-  SUM(food_cost + wet_cost_of_sales) AS cogs,
-  SUM(food_revenue + wet_revenue) - SUM(food_cost + wet_cost_of_sales) AS gross_margin,
+  COUNTIF(is_closed = FALSE AND revenue_missing = FALSE
+          AND forecast_revenue IS NOT NULL) AS eligible_rows,
+  SUM(CASE WHEN is_closed = FALSE AND revenue_missing = FALSE
+           AND forecast_revenue IS NOT NULL
+      THEN food_revenue + wet_revenue END) AS actual_revenue,
+  SUM(CASE WHEN is_closed = FALSE AND revenue_missing = FALSE
+           AND forecast_revenue IS NOT NULL
+      THEN forecast_revenue END) AS forecast_revenue,
+  SUM(CASE WHEN is_closed = FALSE AND revenue_missing = FALSE
+           AND forecast_revenue IS NOT NULL
+      THEN food_revenue + wet_revenue - forecast_revenue END) AS variance,
   100 * SAFE_DIVIDE(
-    SUM(food_revenue + wet_revenue) - SUM(food_cost + wet_cost_of_sales),
-    SUM(food_revenue + wet_revenue)
-  ) AS gross_margin_pct,
-  100 * SAFE_DIVIDE(SUM(food_revenue), SUM(food_revenue + wet_revenue)) AS food_revenue_mix_pct,
-  100 * SAFE_DIVIDE(SUM(food_cost), SUM(food_revenue)) AS food_cogs_pct,
-  100 * SAFE_DIVIDE(SUM(wet_cost_of_sales), SUM(wet_revenue)) AS wet_cogs_pct
+    SUM(CASE WHEN is_closed = FALSE AND revenue_missing = FALSE
+             AND forecast_revenue IS NOT NULL
+        THEN food_revenue + wet_revenue - forecast_revenue END),
+    SUM(CASE WHEN is_closed = FALSE AND revenue_missing = FALSE
+             AND forecast_revenue IS NOT NULL
+        THEN forecast_revenue END)
+  ) AS variance_pct
 FROM `YOUR_PROJECT_ID.YOUR_DATASET.Cleaned_Site_Trading`
-WHERE is_exact_duplicate = FALSE
-  AND is_closed = FALSE
-  AND revenue_missing = FALSE
-  AND cost_cogs_missing = FALSE
 GROUP BY site
 ORDER BY site;
 
--- 3. Wastage value and rates. The percentage denominator requires complete revenue.
+-- 2. Forecast variance by shift and weekday, matching the original analysis.
+SELECT
+  'shift' AS breakdown,
+  shift AS category,
+  SUM(CASE WHEN is_closed = FALSE AND revenue_missing = FALSE
+                AND forecast_revenue IS NOT NULL
+      THEN food_revenue + wet_revenue - forecast_revenue END) AS variance
+FROM `YOUR_PROJECT_ID.YOUR_DATASET.Cleaned_Site_Trading`
+GROUP BY shift
+UNION ALL
+SELECT
+  'weekday',
+  day_of_week,
+  SUM(CASE WHEN is_closed = FALSE AND revenue_missing = FALSE
+                AND forecast_revenue IS NOT NULL
+      THEN food_revenue + wet_revenue - forecast_revenue END)
+FROM `YOUR_PROJECT_ID.YOUR_DATASET.Cleaned_Site_Trading`
+GROUP BY day_of_week
+ORDER BY breakdown, category;
+
+-- 3. Gross margin by site, with the submitted matched-population rules.
 SELECT
   site,
-  SUM(CASE WHEN is_closed = FALSE AND is_exact_duplicate = FALSE
-    AND wastage_cost IS NOT NULL THEN wastage_cost END) AS recorded_wastage_cost,
-  COUNTIF(is_closed = FALSE AND is_exact_duplicate = FALSE
-    AND wastage_cost IS NOT NULL) AS shifts_with_recorded_wastage,
+  SUM(CASE WHEN is_closed = FALSE AND revenue_missing = FALSE
+                AND cost_cogs_missing = FALSE
+      THEN food_revenue + wet_revenue END) AS eligible_revenue,
+  SUM(CASE WHEN is_closed = FALSE AND revenue_missing = FALSE
+                AND cost_cogs_missing = FALSE
+      THEN food_cost + wet_cost_of_sales END) AS eligible_cogs,
   100 * SAFE_DIVIDE(
-    SUM(CASE WHEN is_closed = FALSE AND is_exact_duplicate = FALSE
-      AND revenue_missing = FALSE AND wastage_cost IS NOT NULL THEN wastage_cost END),
-    SUM(CASE WHEN is_closed = FALSE AND is_exact_duplicate = FALSE
-      AND revenue_missing = FALSE AND wastage_cost IS NOT NULL THEN food_revenue END)
+    SUM(CASE WHEN is_closed = FALSE AND revenue_missing = FALSE
+                  AND cost_cogs_missing = FALSE
+        THEN food_revenue + wet_revenue - food_cost - wet_cost_of_sales END),
+    SUM(CASE WHEN is_closed = FALSE AND revenue_missing = FALSE
+                  AND cost_cogs_missing = FALSE
+        THEN food_revenue + wet_revenue END)
+  ) AS gross_margin_pct
+FROM `YOUR_PROJECT_ID.YOUR_DATASET.Cleaned_Site_Trading`
+GROUP BY site
+ORDER BY site;
+
+-- 4. Wastage value and rate using matched row populations.
+-- Reconcile the Excel numerator to these SQL definitions.
+SELECT
+  site,
+  SUM(CASE WHEN is_closed = FALSE AND wastage_cost IS NOT NULL
+      THEN wastage_cost END) AS recorded_wastage_value,
+  SUM(CASE WHEN is_closed = FALSE AND revenue_missing = FALSE
+                AND wastage_cost IS NOT NULL
+      THEN wastage_cost END) AS wastage_on_complete_revenue_rows,
+  100 * SAFE_DIVIDE(
+    SUM(CASE WHEN is_closed = FALSE AND revenue_missing = FALSE
+                  AND wastage_cost IS NOT NULL
+        THEN wastage_cost END),
+    SUM(CASE WHEN is_closed = FALSE AND revenue_missing = FALSE
+                  AND wastage_cost IS NOT NULL
+        THEN food_revenue END)
   ) AS wastage_pct_of_food_revenue,
   100 * SAFE_DIVIDE(
-    SUM(CASE WHEN is_closed = FALSE AND is_exact_duplicate = FALSE
-      AND revenue_missing = FALSE AND wastage_cost IS NOT NULL THEN wastage_cost END),
-    SUM(CASE WHEN is_closed = FALSE AND is_exact_duplicate = FALSE
-      AND revenue_missing = FALSE AND wastage_cost IS NOT NULL THEN food_revenue + wet_revenue END)
+    SUM(CASE WHEN is_closed = FALSE AND revenue_missing = FALSE
+                  AND wastage_cost IS NOT NULL
+        THEN wastage_cost END),
+    SUM(CASE WHEN is_closed = FALSE AND revenue_missing = FALSE
+                  AND wastage_cost IS NOT NULL
+        THEN food_revenue + wet_revenue END)
   ) AS wastage_pct_of_total_revenue
 FROM `YOUR_PROJECT_ID.YOUR_DATASET.Cleaned_Site_Trading`
 GROUP BY site
-ORDER BY recorded_wastage_cost DESC;
+ORDER BY site;
 
--- 4. Review rating with eligible review count, by platform and by site.
+-- 5. Review rating and count by site and platform, matching the review analysis.
 SELECT
   'site' AS breakdown,
   site AS category,
-  COUNTIF(rating_valid AND duplicate_after_first = FALSE) AS valid_reviews,
-  AVG(IF(rating_valid AND duplicate_after_first = FALSE, rating_numeric, NULL)) AS average_rating
+  COUNTIF(rating_missing = FALSE AND rating_invalid = FALSE
+          AND duplicate_after_first = FALSE) AS valid_reviews,
+  AVG(IF(rating_missing = FALSE AND rating_invalid = FALSE
+         AND duplicate_after_first = FALSE, rating_numeric, NULL)) AS average_rating
 FROM `YOUR_PROJECT_ID.YOUR_DATASET.Guest_Reviews_Cleaned`
-WHERE site_missing = FALSE
 GROUP BY site
 UNION ALL
 SELECT
-  'source',
+  'platform',
   source,
-  COUNTIF(rating_valid AND duplicate_after_first = FALSE),
-  AVG(IF(rating_valid AND duplicate_after_first = FALSE, rating_numeric, NULL))
+  COUNTIF(rating_missing = FALSE AND source_missing = FALSE
+          AND rating_invalid = FALSE AND duplicate_after_first = FALSE),
+  AVG(IF(rating_missing = FALSE AND source_missing = FALSE
+         AND rating_invalid = FALSE AND duplicate_after_first = FALSE,
+         rating_numeric, NULL))
 FROM `YOUR_PROJECT_ID.YOUR_DATASET.Guest_Reviews_Cleaned`
-WHERE source_missing = FALSE
 GROUP BY source
 ORDER BY breakdown, category;
+
+-- WAPE and month-level forecast variance are intentionally omitted:
+-- they were not part of the submitted final analysis.
