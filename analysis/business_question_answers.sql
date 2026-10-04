@@ -6,8 +6,6 @@
 -- 1. Site actual-versus-forecast totals.
 SELECT
   site,
-  COUNTIF(is_closed = FALSE AND revenue_missing = FALSE
-          AND forecast_revenue IS NOT NULL) AS eligible_rows,
   SUM(CASE WHEN is_closed = FALSE AND revenue_missing = FALSE
            AND forecast_revenue IS NOT NULL
       THEN food_revenue + wet_revenue END) AS actual_revenue,
@@ -17,6 +15,14 @@ SELECT
   SUM(CASE WHEN is_closed = FALSE AND revenue_missing = FALSE
            AND forecast_revenue IS NOT NULL
       THEN food_revenue + wet_revenue - forecast_revenue END) AS variance,
+  100 * SAFE_DIVIDE(
+    SUM(CASE WHEN is_closed = FALSE AND revenue_missing = FALSE
+             AND forecast_revenue IS NOT NULL
+        THEN food_revenue + wet_revenue - forecast_revenue END),
+    SUM(CASE WHEN is_closed = FALSE AND revenue_missing = FALSE
+             AND forecast_revenue IS NOT NULL
+        THEN forecast_revenue END)
+  ) AS variance_pct,
   100 * SAFE_DIVIDE(
     SUM(CASE WHEN is_closed = FALSE AND revenue_missing = FALSE
              AND forecast_revenue IS NOT NULL
