@@ -15,15 +15,6 @@ All trading answer figures below exclude the 30 later exact-copy rows. The sourc
 | How did guest reviews vary? | After excluding later flagged duplicate copies, 1,155 valid ratings averaged 3.65/5. Site averages ranged from 3.58 to 3.72. By platform, Google averaged 3.62 (648 ratings), TripAdvisor 3.70 (355), and Facebook 3.68 (152). These are ratings from self-selected reviewers, not a direct measure of all guests' experience. |
 | Was there a relationship between monthly revenue and average rating? | The exploratory site/month correlation was -0.079, indicating little linear association in this dataset. Review dates are not confirmed visit dates, and correlation cannot establish causation. |
 
-## Questions outside this release's scope
-
-| Proposed question | Why it is not answered here | Evidence needed |
-|---|---|---|
-| Where are labour costs exceeding budget? | The final project package has no labour budget or labour-budget targets. | Approved labour budgets at a matching site/date/shift or site/month grain, plus an agreed definition of labour cost. |
-| How efficiently are labour hours converted into revenue? | The final analysis deliberately covers trading and guest reviews only; it does not include a workforce-hours table. | Validated clocked/scheduled hours joined to trading shifts, with missing-punch and duplicate rules. |
-
-These remain explicit out-of-scope items. No labour performance claim should be inferred from the current project.
-
 ## Definitions and caveats
 
 - Forecast variance is `(actual food + wet revenue - forecast revenue) / forecast revenue` on open shifts with complete recorded revenue and a forecast.
