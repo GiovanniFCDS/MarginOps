@@ -22,14 +22,6 @@ SELECT
     SUM(CASE WHEN is_closed = FALSE AND revenue_missing = FALSE
              AND forecast_revenue IS NOT NULL
         THEN forecast_revenue END)
-  ) AS variance_pct,
-  100 * SAFE_DIVIDE(
-    SUM(CASE WHEN is_closed = FALSE AND revenue_missing = FALSE
-             AND forecast_revenue IS NOT NULL
-        THEN food_revenue + wet_revenue - forecast_revenue END),
-    SUM(CASE WHEN is_closed = FALSE AND revenue_missing = FALSE
-             AND forecast_revenue IS NOT NULL
-        THEN forecast_revenue END)
   ) AS variance_pct
 FROM `YOUR_PROJECT_ID.YOUR_DATASET.Cleaned_Site_Trading`
 GROUP BY site

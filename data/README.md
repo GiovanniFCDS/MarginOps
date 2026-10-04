@@ -1,7 +1,12 @@
-# Data notes
+# Data handling
 
-The completed project uses two datasets: site trading at site/date/shift grain and guest reviews at individual-review grain. This public repository does not include raw or row-level records or guest review text.
+The analysis uses two datasets only:
 
-The final analysis does not include staff timesheets or a labour budget. Labour budget and labour-hour questions therefore remain out of scope.
+- Site trading records at site/date/shift grain (7,500 rows in the working dataset).
+- Guest reviews at one row per submitted review (1,171 rows in the working dataset).
 
-For reproduction, load the source data into your own BigQuery dataset and replace `YOUR_PROJECT_ID.YOUR_DATASET` in the SQL scripts. Follow each KPI's eligibility conditions and confirm the revenue basis before treating commercial measures as final.
+Staff timesheets and labour data are out of scope and are not used by the project.
+
+The original trading and review files contain row-level operational data and review text. They are not included in this public repository. The Excel reconciliation workbook also contains a full cleaned-data sheet, and the Power BI file embeds its model data, so neither source artifact is published here.
+
+For local reproduction, place files you are authorized to use in `data/raw/` with the filenames expected by the notebooks. The notebooks write processed files to `data/cleaned/`. These folders are excluded from Git. Do not commit raw or cleaned rows, review text, credentials, or a PBIX/XLSX containing embedded source data. Publish only an approved, sanitized aggregate export.

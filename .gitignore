@@ -1,5 +1,13 @@
+# Local environment files
 .DS_Store
 .ipynb_checkpoints/
 .env
 *.pem
 *.key
+
+# Private or data-bearing project files
+/data/raw/
+/data/cleaned/
+/data/outputs/
+*.pbix
+**/*source_workbook*.xlsx

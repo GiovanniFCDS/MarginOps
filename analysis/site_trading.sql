@@ -5,8 +5,8 @@
 -- Replace YOUR_PROJECT_ID.YOUR_DATASET before execution.
 
 -- Query 1
-SELECT*
-FROM `YOUR_PROJECT_ID.YOUR_DATASET.Cleaned_Site_Trading`
+SELECT *
+FROM `YOUR_PROJECT_ID.YOUR_DATASET.Cleaned_Site_Trading`;
 
 -- Query 2
 /* Looking for exact numbers of missing data*/
@@ -19,7 +19,7 @@ COUNTIF(is_exact_duplicate) AS is_exact_duplicate_count,
 COUNTIF(is_key_duplicate) AS is_key_duplicate_count,
 COUNTIF(day_mismatch) AS day_mismatch_count
 
-FROM `YOUR_PROJECT_ID.YOUR_DATASET.Cleaned_Site_Trading`
+FROM `YOUR_PROJECT_ID.YOUR_DATASET.Cleaned_Site_Trading`;
 
 -- Query 3
 /* Looking at missing percentages*/
@@ -43,7 +43,7 @@ covers_missing_pct,
 is_exact_duplicate_pct,
 is_key_duplicate_pct,
 day_mismatch_pct
-FROM count_pcts
+FROM count_pcts;
 
 -- Query 4
 /* Checking date ranges */
@@ -52,7 +52,7 @@ SELECT
 min(date) AS earliest_date,
 max(date) AS latest_date
 
-FROM `YOUR_PROJECT_ID.YOUR_DATASET.Cleaned_Site_Trading`
+FROM `YOUR_PROJECT_ID.YOUR_DATASET.Cleaned_Site_Trading`;
 
 -- Query 5
 /* Checking if site names are correct */
@@ -60,20 +60,20 @@ FROM `YOUR_PROJECT_ID.YOUR_DATASET.Cleaned_Site_Trading`
 SELECT
 DISTINCT (site)
 
-FROM `YOUR_PROJECT_ID.YOUR_DATASET.Cleaned_Site_Trading`
+FROM `YOUR_PROJECT_ID.YOUR_DATASET.Cleaned_Site_Trading`;
 
 -- Query 6
 /* Checking if shifts are correct */
 
 SELECT
 DISTINCT(shift)
-FROM `YOUR_PROJECT_ID.YOUR_DATASET.Cleaned_Site_Trading`
+FROM `YOUR_PROJECT_ID.YOUR_DATASET.Cleaned_Site_Trading`;
 
 -- Query 7
 /* Checking how many non-values in wastage */
 
 SELECT COUNTIF(wastage_cost IS NULL) AS wastage_missing_count
-FROM `YOUR_PROJECT_ID.YOUR_DATASET.Cleaned_Site_Trading`
+FROM `YOUR_PROJECT_ID.YOUR_DATASET.Cleaned_Site_Trading`;
 
 -- Query 8
 /* Creating Core KPIs */
@@ -94,7 +94,7 @@ SELECT
     / SUM(CASE WHEN is_closed = false AND revenue_missing = false AND cost_cogs_missing = false THEN food_revenue + wet_revenue END) * 100 AS gross_margin_pct,
   site
 FROM `YOUR_PROJECT_ID.YOUR_DATASET.Cleaned_Site_Trading`
-GROUP BY site
+GROUP BY site;
 
 -- Query 9
 /* Looking at total wastage, food wastage and total wastage percentage */
@@ -110,7 +110,7 @@ SELECT
 
   site
 FROM `YOUR_PROJECT_ID.YOUR_DATASET.Cleaned_Site_Trading`
-GROUP BY site
+GROUP BY site;
 
 -- Query 10
 /* Calculating actual vs forecast revenue - variance */
@@ -128,7 +128,7 @@ SELECT
 
   site
 FROM `YOUR_PROJECT_ID.YOUR_DATASET.Cleaned_Site_Trading`
-GROUP BY site
+GROUP BY site;
 
 -- Query 11
 /* Looking at KPIs over Lunch and Dinner on sites */
@@ -142,10 +142,9 @@ SUM(CASE WHEN is_closed = false AND revenue_missing = false AND forecast_revenue
  - SUM(CASE WHEN is_closed = false AND revenue_missing = false AND forecast_revenue IS NOT NULL THEN forecast_revenue END) AS forecast_variance,
 
 site,
-shift,
-
+shift
 FROM `YOUR_PROJECT_ID.YOUR_DATASET.Cleaned_Site_Trading`
-GROUP BY shift, site
+GROUP BY shift, site;
 
 -- Query 12
 /* Looking at KPIs over the days of the week on sites */
@@ -159,11 +158,10 @@ SUM(CASE WHEN is_closed = false AND revenue_missing = false AND forecast_revenue
  - SUM(CASE WHEN is_closed = false AND revenue_missing = false AND forecast_revenue IS NOT NULL THEN forecast_revenue END) AS forecast_variance,
 
 site,
-day_of_week,
-
+day_of_week
 FROM `YOUR_PROJECT_ID.YOUR_DATASET.Cleaned_Site_Trading`
 GROUP BY day_of_week, site
-ORDER BY site ASC
+ORDER BY site ASC;
 
 -- Query 13
 /* Looking at previous month total revenue vs current month - creates variance p/m */
@@ -175,8 +173,7 @@ DATE_TRUNC(
 SUM(CASE WHEN is_closed = false AND revenue_missing = false THEN food_revenue END) AS total_food_revenue,
 SUM(CASE WHEN is_closed = false AND revenue_missing = false THEN wet_revenue END) AS total_wet_revenue,
 SUM(CASE WHEN is_closed = false AND revenue_missing = false THEN food_revenue + wet_revenue END) AS total_revenue,
-site,
-
+site
 FROM `YOUR_PROJECT_ID.YOUR_DATASET.Cleaned_Site_Trading`
 
 GROUP BY month,site
@@ -212,7 +209,7 @@ total_food_revenue - prior_food_revenue AS food_revenue_variance,
 total_wet_revenue - prior_wet_revenue AS wet_revenue_variance,
 total_revenue - prior_total_revenue AS total_revenue_variance
 FROM with_lags
-ORDER BY site, month
+ORDER BY site, month;
 
 -- Query 14
 /* Creating a ranking classification with total revenues */
@@ -239,4 +236,4 @@ ranking AS (
 
 SELECT *
 FROM ranking
-ORDER BY revenue_rank
+ORDER BY revenue_rank;

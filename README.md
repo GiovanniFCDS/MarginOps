@@ -1,84 +1,60 @@
 # MarginOps
 
-### Commercial finance and FP&A analysis for hospitality operations
+### Commercial trading and guest-review analysis for hospitality
 
-An end-to-end portfolio project turning hospitality trading and guest-review data into documented commercial KPIs, analysis and a Power BI report.
+MarginOps is my first end-to-end data analytics project. I used hospitality operations data to build a workflow across **pandas, BigQuery SQL, Excel and Power BI**, then checked that the headline KPIs reconciled across tools.
 
-**Status: analysis complete; cross-tool reconciliation open** · **Data:** site trading and guest reviews · **Tools:** Python, BigQuery SQL, Excel and Power BI
+## Results at a glance
 
----
+The completed analysis covers 7,500 site/date/shift trading rows and 1,171 guest reviews across five sites. The reconciled trading results are **£6,027,795 actual revenue**, **£5,895,524 forecast revenue**, and **+£132,271 (+2.24%) net variance**. Gross margin is **65.32%** overall. Wastage is **5.71% of food revenue** when both numerator and denominator use open shifts with complete revenue and recorded wastage.
 
-## Executive summary
-
-MarginOps analyses **7,500 site/date/shift trading records** and **1,171 guest reviews** across five sites. It connects my hospitality operations experience with my BSc in FinTech with Data Analytics.
-
-Using the same row eligibility as the submitted SQL and Excel work, the five site-level forecast results sum to **£6.028m actual revenue** against **£5.896m forecast**, a net variance of **+£132.3k (+2.24%)**. The SQL did not use duplicate flags to filter trading rows. Gross margin ranged from **65.14% to 66.13%** across sites. Guest-review SQL reported site averages from **3.58 to 3.72**, and the exploratory site/month revenue-rating correlation was **-0.079**.
-
-The report answers the commercial questions the final two datasets can support and identifies labour questions that remain outside this project's scope. See [business questions and answers](docs/business_questions.md).
+The cleaning audit found 60 rows in repeated site/date/shift keys (30 pairs). Values match within each pair, so the SQL and Power BI KPI policy retains the rows, consistent with the submitted Excel analysis. See [methodology](docs/methodology.md) and [findings and limits](docs/findings_and_limits.md) for definitions and caveats.
 
 ## Workflow
 
 ```mermaid
 flowchart LR
-    A[Trading and review data] --> B[Python cleaning and QA]
-    B --> C[BigQuery analysis]
-    C --> D[Excel reconciliation]
-    C --> E[Power BI report]
-    C --> F[Exploratory monthly comparison]
+    A[Trading and review sources] --> B[pandas cleaning and QA]
+    B --> C[BigQuery SQL analysis]
+    C --> D[Excel KPI reconciliation]
+    C --> E[Power BI reporting]
 ```
 
-## What the analysis found
+## Project pipeline
 
-- The net forecast variance was positive overall, but net bias alone is not a full forecast-accuracy measure. The original analysis did not calculate WAPE or another absolute-error metric.
-- Dinner and weekends showed the strongest positive forecast variances; Tuesday was below forecast in the weekday breakdown.
-- Site gross-margin percentages were close together. The submitted analysis did not decompose the differences into product-mix or category-level COGS drivers.
-- The wastage-rate result needs reconciliation: the SQL and Excel files use different numerator populations. The public findings flag this instead of presenting a single rate as settled.
-- Review averages varied little across sites and platforms. Reviewers are self-selected, and the recorded date is not confirmed as the visit date.
+| Stage | Evidence in this repository |
+|---|---|
+| Clean and validate | [Trading cleaning notebook](cleaning/site_trading_cleaning.ipynb) and [guest-review cleaning notebook](cleaning/guest_reviews_cleaning.ipynb); code and notes only, with saved outputs removed |
+| Analyse | [Trading SQL](analysis/site_trading.sql), [review SQL](analysis/guest_reviews.sql), [combined analysis](analysis/combined_review_trading.sql), and [business-question queries](analysis/business_question_answers.sql) |
+| Reconcile | [Excel reconciliation notes](excel/README.md) document the matched KPI definitions and aggregate cross-tool checkpoint |
+| Communicate | [Power BI release notes](visuals/README.md) describe the six-page report and the public-data handling decision |
 
-## Business questions
+## Questions answered
 
-The original draft also listed questions about labour budgets and revenue per labour hour. The completed MarginOps release contains trading and review data only; it does not contain staff timesheets or a labour budget. Those questions are marked out of scope rather than answered by inference.
+The project answers questions supported by trading and guest-review data: site and shift performance, revenue versus forecast, gross margin, wastage, review ratings, and an exploratory monthly revenue/rating comparison. **Staff timesheets and labour analysis are not part of this project.** Labour-budget and revenue-per-labour-hour questions remain out of scope.
 
-## Tools and methods
+## Interpretation limits
 
-| Stage | Tools | Work demonstrated |
-|---|---|---|
-| Clean and validate | Python, pandas | Cleaning notebooks exist in the working files; they are not included in this public repo |
-| Analyse | BigQuery SQL | Analysis scripts are included; raw source data and executed notebook outputs are not |
-| Reconcile | Excel | Workbook exists in the working files; wastage-rate numerator still needs reconciliation |
-| Communicate | Power BI | Five-page report exists in the working files; headline KPIs do not yet match SQL/Excel |
+- Net forecast variance is not a forecast-accuracy metric; WAPE/MAE was not calculated.
+- Source revenue basis (VAT, discounts, service charge and tips) is unconfirmed.
+- The Wellington's Sep–Oct 2025 dip is attributed to a refurbishment closure in the supplied notes.
+- August 2026 is partial through 17 August; it should not be compared with a full month.
+- Reviews are self-selected, and review dates are not confirmed visit dates. The site/month correlation is descriptive, not causal.
+- Monthly totals have not been normalized for trading days.
+
+## Data and public-release policy
+
+Row-level trading records, guest review text, the Excel source workbook and the PBIX are not committed. The workbook contains a full cleaned-data sheet, and the PBIX embeds its model data. The repository therefore contains code-only cleaning notebooks and aggregate findings, not the underlying source rows or an extractable Power BI data model. Add only an explicitly sanitized, authorized public export.
+
+The cleaning notebooks expect authorized source files at `data/raw/site_trading.csv` and `data/raw/guest_reviews.csv`; generated outputs are written to `data/cleaned/`. Those folders are ignored by Git. Configure your own BigQuery tables and replace `YOUR_PROJECT_ID.YOUR_DATASET` in the SQL scripts before running them.
 
 ## Repository guide
 
-| Path | Contents |
-|---|---|
-| [`analysis/business_question_answers.sql`](analysis/business_question_answers.sql) | Reproducible calculations using the submitted SQL eligibility rules |
-| [`analysis/site_trading.sql`](analysis/site_trading.sql) | Trading data checks and KPI analysis |
-| [`analysis/guest_reviews.sql`](analysis/guest_reviews.sql) | Review quality, rating and volume analysis |
-| [`analysis/combined_review_trading.sql`](analysis/combined_review_trading.sql) | Monthly views, join coverage and exploratory comparison |
-| [`docs/business_questions.md`](docs/business_questions.md) | Direct answers, evidence and out-of-scope questions |
-| [`docs/methodology.md`](docs/methodology.md) | Grain, eligibility and interpretation limits |
-| [`docs/findings_and_limits.md`](docs/findings_and_limits.md) | Findings and remaining evidence gaps |
-| [`data/README.md`](data/README.md) | Data handling and reproduction guidance |
-| [`visuals/README.md`](visuals/README.md) | Power BI artifact and public-release notes |
+- `cleaning/` — pandas cleaning and QA notebooks
+- `analysis/` — BigQuery SQL
+- `docs/` — methodology, business answers, and limits
+- `excel/` — reconciliation definitions and aggregate checkpoint
+- `visuals/` — Power BI release notes
+- `data/README.md` — data scope and handling
 
-## Analytical principles
-
-- Each KPI defines its own eligible rows; one metric's exclusions do not silently affect another.
-- Missing values and ambiguous negatives are not automatically treated as zero.
-- The raw cleaned table is preserved. Trading duplicate flags are QA fields; the submitted KPI SQL does not use them to exclude rows.
-- Rating averages are shown with eligible review counts.
-- Trading and reviews are aggregated separately to site/month before joining.
-- Results are descriptive. Association is not causation.
-
-## Reproduce the SQL
-
-The scripts use BigQuery Standard SQL. Load compatible tables into your own dataset and replace `YOUR_PROJECT_ID.YOUR_DATASET` with your BigQuery project and dataset. Table and field names should match the supplied project schemas. Source-level data, employee information, guest text and saved row-level outputs are not published.
-
-## Data and privacy
-
-This public repository contains SQL and documented aggregate findings, not the pandas notebooks, Excel workbook, Power BI file, raw records or guest text. The work across all four tools exists in the supplied working files, but the public repo currently lets a reviewer inspect the SQL only. The Excel and Power BI outputs need cross-tool reconciliation before their findings are presented as a single validated result; the workbook and report also contain named-site details and row-level data.
-
-## About
-
-MarginOps is a personal portfolio project demonstrating applied analytics and commercial reasoning. It is not an official report for an employer or venue.
+MarginOps is a personal portfolio project, not an official report for any employer or venue.

@@ -6,15 +6,15 @@
 -- Query 1
 /* First load of the cleaned data */
 
-SELECT*
-FROM `YOUR_PROJECT_ID.YOUR_DATASET.Guest_Reviews_Cleaned`
+SELECT *
+FROM `YOUR_PROJECT_ID.YOUR_DATASET.Guest_Reviews_Cleaned`;
 
 -- Query 2
 /* Counting rows */
 
 SELECT
 COUNT(*) AS total_row_count
-FROM `YOUR_PROJECT_ID.YOUR_DATASET.Guest_Reviews_Cleaned`
+FROM `YOUR_PROJECT_ID.YOUR_DATASET.Guest_Reviews_Cleaned`;
 
 -- Query 3
 /* Earliest and latest date check */
@@ -22,7 +22,7 @@ FROM `YOUR_PROJECT_ID.YOUR_DATASET.Guest_Reviews_Cleaned`
 SELECT
 min(date_parsed) AS earliest_date,
 max(date_parsed) AS latest_date
-FROM `YOUR_PROJECT_ID.YOUR_DATASET.Guest_Reviews_Cleaned`
+FROM `YOUR_PROJECT_ID.YOUR_DATASET.Guest_Reviews_Cleaned`;
 
 -- Query 4
 /* Counting all missing numbers and duplicates */
@@ -38,21 +38,21 @@ COUNTIF(review_text_missing) AS missing_review_text,
 COUNTIF(potential_duplicate) AS potential_dupes_count,
 COUNTIF(duplicate_after_first) AS after_first_dupes_count
 
-FROM `YOUR_PROJECT_ID.YOUR_DATASET.Guest_Reviews_Cleaned`
+FROM `YOUR_PROJECT_ID.YOUR_DATASET.Guest_Reviews_Cleaned`;
 
 -- Query 5
 /* Showing site names and numbers to confirm cleaned data */
 
 SELECT
-DISTINCT(site),
-FROM `YOUR_PROJECT_ID.YOUR_DATASET.Guest_Reviews_Cleaned`
+DISTINCT(site)
+FROM `YOUR_PROJECT_ID.YOUR_DATASET.Guest_Reviews_Cleaned`;
 
 -- Query 6
 /* Showing source names and numbers to confirm cleaned data */
 
 SELECT
 DISTINCT(source)
-FROM `YOUR_PROJECT_ID.YOUR_DATASET.Guest_Reviews_Cleaned`
+FROM `YOUR_PROJECT_ID.YOUR_DATASET.Guest_Reviews_Cleaned`;
 
 -- Query 7
 /* Looking at ratings per site, with percentages and average per site */
@@ -83,7 +83,7 @@ two_star / total_reviews * 100 AS two_star_pct,
 three_star / total_reviews * 100 AS three_star_pct,
 four_star / total_reviews * 100 AS four_star_pct,
 five_star / total_reviews * 100 AS five_star_pct
-FROM starring
+FROM starring;
 
 -- Query 8
 /* Average rating with review count by site */
@@ -95,10 +95,9 @@ AND duplicate_after_first = false THEN rating_numeric END) AS avg_rating,
 COUNT(CASE WHEN rating_missing = false
 AND rating_invalid = false AND duplicate_after_first = false THEN rating_numeric END) AS total_reviews,
 
-site,
-
+site
 FROM `YOUR_PROJECT_ID.YOUR_DATASET.Guest_Reviews_Cleaned`
-GROUP BY site
+GROUP BY site;
 
 -- Query 9
 /* Average rating by source against total reviews */
@@ -110,11 +109,10 @@ AND duplicate_after_first = false THEN rating_numeric END) AS avg_rating,
 COUNT(CASE WHEN rating_missing = false AND source_missing = false
 AND rating_invalid = false AND duplicate_after_first = false THEN rating_numeric END) AS total_reviews,
 
-source,
-
+source
 FROM `YOUR_PROJECT_ID.YOUR_DATASET.Guest_Reviews_Cleaned`
 GROUP BY source
-ORDER BY total_reviews DESC
+ORDER BY total_reviews DESC;
 
 -- Query 10
 /* Review volume over time */
@@ -145,7 +143,7 @@ lagging AS (
 
 SELECT *, total_reviews - previous_month_reviews AS review_variance
 FROM lagging
-ORDER BY site, source, month
+ORDER BY site, source, month;
 
 -- Query 11
 /* Ranking by average rating */
@@ -172,7 +170,7 @@ ranking AS (
 
 SELECT *
 FROM ranking
-ORDER BY average_rating_rank
+ORDER BY average_rating_rank;
 
 -- Query 12
 /* Duplicate impact check */
@@ -193,4 +191,4 @@ site,
     THEN rating_numeric END) AS total_reviews_incl_dupes
 
 FROM `YOUR_PROJECT_ID.YOUR_DATASET.Guest_Reviews_Cleaned`
-GROUP BY site
+GROUP BY site;

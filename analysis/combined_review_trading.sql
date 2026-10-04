@@ -13,7 +13,7 @@ SELECT
   SUM(CASE WHEN is_closed = false AND revenue_missing = false THEN food_revenue + wet_revenue END) AS total_revenue,
   site
 FROM `YOUR_PROJECT_ID.YOUR_DATASET.Cleaned_Site_Trading`
-GROUP BY month, site
+GROUP BY month, site;
 
 -- Query 2
 /* Creating a reusable monthly reviews view */
@@ -28,7 +28,7 @@ SELECT
     AND duplicate_after_first = false THEN rating_numeric END) AS total_reviews,
   site
 FROM `YOUR_PROJECT_ID.YOUR_DATASET.Guest_Reviews_Cleaned`
-GROUP BY month, site
+GROUP BY month, site;
 
 -- Query 3
 /* Joining */
@@ -42,7 +42,7 @@ r.total_reviews
 
 FROM `YOUR_PROJECT_ID.YOUR_DATASET.v_trading_monthly` AS t
 LEFT JOIN `YOUR_PROJECT_ID.YOUR_DATASET.v_reviews_monthly` AS r
-  ON t.site = r.site AND t.month = r.month
+  ON t.site = r.site AND t.month = r.month;
 
 -- Query 4
 /* Joining and aggregating as a sanity check  */
@@ -62,7 +62,7 @@ r.total_reviews
 FROM `YOUR_PROJECT_ID.YOUR_DATASET.v_trading_monthly` AS t
 LEFT JOIN `YOUR_PROJECT_ID.YOUR_DATASET.v_reviews_monthly` AS r
   ON t.site = r.site AND t.month = r.month
-)
+);
 
 -- Query 5
 /* Identifying nulls */
@@ -71,7 +71,7 @@ SELECT t.site, t.month
 FROM `YOUR_PROJECT_ID.YOUR_DATASET.v_trading_monthly` AS t
 LEFT JOIN `YOUR_PROJECT_ID.YOUR_DATASET.v_reviews_monthly` AS r
   ON t.site = r.site AND t.month = r.month
-WHERE r.avg_rating IS NULL
+WHERE r.avg_rating IS NULL;
 
 -- Query 6
 /* Looking at correlation */
@@ -85,4 +85,4 @@ FROM (
   LEFT JOIN `YOUR_PROJECT_ID.YOUR_DATASET.v_reviews_monthly` AS r
     ON t.site = r.site AND t.month = r.month
   WHERE r.avg_rating IS NOT NULL
-)
+);

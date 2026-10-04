@@ -1,7 +1,7 @@
 # Power BI report
 
-A five-page Power BI report was created for MarginOps. The `.pbix` file is not included in this public repository because Power BI files may embed the underlying data. The PDF export also contains named-site figures and detailed trading rows, so it is not included until those details are reviewed for public release.
+The latest working report has six pages: Overview, Site Performance, Wastage & Cost, Guest Reviews, Statistical Appendix, and Data Quality & Caveats. The report presents the reconciled headline KPIs: revenue £6,027,795.03, gross margin 65.32%, wastage 5.71%, and revenue variance +2.24%.
 
-The provided five-page PDF was inspected. Its revenue, gross-margin and forecast-variance totals do not match the submitted SQL/Excel outputs, and its duplicate-key note conflicts with the cleaned pandas duplicate flags. Reconcile the filters, measures and duplicate description before treating the report as validated or sharing it as the project’s final result.
+The PBIX is not included in this public repository because it embeds its underlying row-level model data. The full Excel workbook is also omitted because it contains a cleaned-data sheet. A public preview should be exported from the latest PBIX only after checking that no row-level audit details are visible and that the partial August 2026 caveat is clear on trend pages.
 
-The repository also lacks the pandas cleaning notebooks and Excel reconciliation workbook, so a public reviewer cannot currently inspect those stages. Add sanitized, reproducible versions once row-level and named-site content has been removed.
+Remaining presentation refinements are minor: compact slicers and a visible date range on the overview; a clear denominator note beside the wastage KPI; and an explicit partial-month label or exclusion on trend comparisons. The detailed duplicate audit table should remain private; aggregate duplicate counts and the KPI reconciliation matrix are suitable for a public export.
