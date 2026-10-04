@@ -13,10 +13,6 @@
 - The 60 rows flagged as repeated trading keys are 30 two-row groups. Each group contains one unique original value set, confirming 30 additional exact copies and no value-conflicting key groups.
 - Excluding those copies changes aggregate forecast bias and WAPE by less than 0.01 percentage points. The main direction of the findings is robust to that sensitivity check.
 
-## Questions outside scope
-
-The completed two-dataset release does not contain workforce hours or labour budgets. It cannot establish which sites exceed a labour budget or calculate sales per labour hour. Those questions require a separate, approved workforce dataset and budget baseline.
-
 ## Open business definitions
 
 1. Confirm whether revenue is gross or net of VAT, promotions, discounts, service charge and tips.
