@@ -1,5 +1,7 @@
 # Data notes
 
-This repository does not include raw or row-level records. The project source files contain hospitality-style trading and guest-review records, including free-text review content; those are kept out of this public repository.
+The completed project uses two datasets: site trading at site/date/shift grain and guest reviews at individual-review grain. This public repository does not include raw or row-level records or guest review text.
 
-For reproduction, load the source data into your own BigQuery dataset, then replace `YOUR_PROJECT_ID.YOUR_DATASET` in the SQL scripts. Follow each KPI's eligibility conditions and confirm the revenue basis before treating commercial measures as final.
+The final analysis does not include staff timesheets or a labour budget. Labour budget and labour-hour questions therefore remain out of scope.
+
+For reproduction, load the source data into your own BigQuery dataset and replace `YOUR_PROJECT_ID.YOUR_DATASET` in the SQL scripts. Follow each KPI's eligibility conditions and confirm the revenue basis before treating commercial measures as final.

@@ -1,19 +1,29 @@
-# Findings and open checks
+# Findings and open evidence gaps
 
-## Findings reported by the analysis
+## Supported findings
 
-- Spend per cover was approximately **£13.25–£13.50** and gross margin approximately **65.1%–66.1%** across the five sites under the documented SQL eligibility rules.
-- Review averages were closely grouped, approximately **3.57–3.72**. Google contributed the largest share of reviews, while platform averages differed only modestly.
-- The exploratory monthly revenue/average-rating correlation was approximately **-0.079**. The result indicates little linear association in this dataset; it does not show that guest sentiment has no effect on sales.
+- On **7,136** de-duplicated open shifts with complete revenue and a forecast, actual revenue was **£6.004m** against **£5.872m** forecast. Net variance was **+2.24%** and WAPE **8.06%**.
+- All 24 complete estate-level calendar months were above forecast. At observed site/month grain, **49 of 123** combinations were below forecast.
+- Gross margin was **65.32%** across **6,998** de-duplicated open shifts with complete revenue and COGS. Site results ranged from **65.15% to 66.13%**.
+- Recorded wastage was **£45,692** across **7,234** de-duplicated open shifts with wastage present. On the matched complete-revenue population it was **5.72% of food revenue**.
+- After review duplicate handling, **1,155** valid ratings averaged **3.65/5**. The exploratory site/month revenue-rating correlation was **-0.079**.
 
-## Checks to resolve before stronger claims
+## Data checks resolved
 
-1. **Trading duplicate keys:** 60 rows are flagged as sharing a site/date/shift key, while 30 are flagged as exact duplicates. Inspect value-level groups and recalculate a sensitivity version before relying on totals or rankings.
-2. **Revenue definition:** confirm how VAT, discounts, promotions, service charge and tips are represented.
-3. **Like-for-like monthly comparison:** adjust totals for trading days or compare average revenue per eligible trading day.
-4. **Attribution:** a monthly revenue drop does not establish refurbishment or another operational cause without source notes or corroborating evidence.
-5. **Rating volume:** show review counts beside averages, particularly for sparse site/platform/month groups.
+- The 60 rows flagged as repeated trading keys are 30 two-row groups. Each group contains one unique original value set, confirming 30 additional exact copies and no value-conflicting key groups.
+- Excluding those copies changes aggregate forecast bias and WAPE by less than 0.01 percentage points. The main direction of the findings is robust to that sensitivity check.
+
+## Questions outside scope
+
+The completed two-dataset release does not contain workforce hours or labour budgets. It cannot establish which sites exceed a labour budget or calculate sales per labour hour. Those questions require a separate, approved workforce dataset and budget baseline.
+
+## Open business definitions
+
+1. Confirm whether revenue is gross or net of VAT, promotions, discounts, service charge and tips.
+2. Use trading-day-normalised measures for like-for-like monthly comparisons.
+3. Support operational explanations (such as refurbishments) with site notes or another source, not revenue trends alone.
+4. Continue to report review counts with averages, particularly for sparse site/platform/month groups.
 
 ## Publication note
 
-The SQL scripts contain no saved query output or row-level examples. Public releases should continue to omit raw files, guest text, embedded Power BI data and named-site detail unless the data owner has confirmed that publication is appropriate.
+Raw data, guest text, named-site outputs and the Power BI files are not included in this public repo. Public findings use aggregate values without site mapping.
